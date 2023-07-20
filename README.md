@@ -4,6 +4,8 @@
 
 This is a fork adding MNIST dataset to the original [backdoor-toolbox](https://github.com/vtu81/backdoor-toolbox) repository. Note that we transform MNIST images to 3\*32\*32 from 1\*28\*28 in preprocessing procedure.
 
+Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other attack and defenses is able to run. 
+
 ## USAGE
 
 ```
