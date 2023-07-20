@@ -6,10 +6,13 @@ import argparse
 import random
 import torch.optim as optim
 from torch.optim.lr_scheduler import MultiStepLR
+import torchvision
+from collections import OrderedDict
 from torch import nn
 from PIL import Image
 from utils import supervisor, tools, default_args, imagenet
 import config
+
 
 
 parser = argparse.ArgumentParser()
@@ -31,10 +34,8 @@ parser.add_argument('-test_alpha', type=float,  required=False, default=None)
 parser.add_argument('-trigger', type=str, required=False, default=None)
 parser.add_argument('-model_path', required=False, default=None)
 parser.add_argument('-cleanser', type=str, required=False, default=None,
-                    choices=default_args.parser_choices['cleanser'])
-parser.add_argument('-defense', type=str, required=False, default=None,
-                    choices=default_args.parser_choices['defense'])
-parser.add_argument('-no_normalize', default=False, action='store_true')
+                    choices=['SCAn', 'AC', 'SS', 'Strip', 'CT', 'SPECTRE'])
+parser.add_argument('-no_normalize', default=True, action='store_true')
 parser.add_argument('-no_aug', default=False, action='store_true')
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-seed', type=int, required=False, default=default_args.seed)
@@ -101,14 +102,17 @@ else:
 
 
 poison_set_dir = supervisor.get_poison_set_dir(args)
-model_path = supervisor.get_model_dir(args, cleanse=(args.cleanser is not None), defense=(args.defense is not None))
+model_path = supervisor.get_model_dir(args, cleanse=(args.cleanser is not None))
 
 
 arch = supervisor.get_arch(args)
 
-import torchvision
+
 # model = torchvision.models.resnet18(weights='IMAGENET1K_V1')
 model = arch(num_classes=num_classes)
+#from resnet_cifar import resnet18
+#model = resnet18(num_classes=43, norm_layer=nn.BatchNorm2d)
+
 model.load_state_dict(torch.load(model_path))
 model = nn.DataParallel(model)
 model = model.cuda()
