@@ -1,4 +1,5 @@
 import torch
+from other_defenses_tool_box import NC, STRIP, FP, ABL, NAD, SentiNet, ScaleUp, SEAM, STF
 import argparse, config, os, sys
 from utils import supervisor, tools, default_args
 import time
@@ -21,12 +22,11 @@ parser.add_argument('-alpha', type=float, required=False,
 parser.add_argument('-test_alpha', type=float, required=False, default=None)
 parser.add_argument('-trigger', type=str, required=False,
                     default=None)
-parser.add_argument('-no_aug', default=False, action='store_true')
-parser.add_argument('-noisy_test', default=False, action='store_true')
+parser.add_argument('-no_aug', default=True, action='store_true')
 parser.add_argument('-model', type=str, required=False, default=None)
 parser.add_argument('-model_path', required=False, default=None)
-parser.add_argument('-no_normalize', default=False, action='store_true')
-parser.add_argument('-defense', type=str, required=True,
+parser.add_argument('-no_normalize', default=True, action='store_true')
+parser.add_argument('-defense', type=str, default='NC',
                     choices=default_args.parser_choices['defense'])
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
@@ -55,12 +55,7 @@ if args.log:
     if not os.path.exists(out_path): os.mkdir(out_path)
     out_path = os.path.join(out_path, 'other_defense')
     if not os.path.exists(out_path): os.mkdir(out_path)
-    if args.noisy_test:
-        out_path = os.path.join(out_path, '%s_noisy_test_%s.out' % (args.defense,
-                                                     supervisor.get_dir_core(args, include_model_name=True,
-                                                                             include_poison_seed=config.record_poison_seed)))
-    else:
-        out_path = os.path.join(out_path, '%s_%s.out' % (args.defense,
+    out_path = os.path.join(out_path, '%s_%s.out' % (args.defense,
                                                      supervisor.get_dir_core(args, include_model_name=True,
                                                                              include_poison_seed=config.record_poison_seed)))
     # fout = open(out_path, 'w')
@@ -72,7 +67,6 @@ if args.log:
 start_time = time.perf_counter()
 
 if args.defense == 'NC':
-    from other_defenses_tool_box.neural_cleanse import NC
     defense = NC(
         args,
         epoch=30,
@@ -80,17 +74,10 @@ if args.defense == 'NC':
         init_cost=1e-3,
         patience=5,
         attack_succ_threshold=0.99,
-        oracle=False,
+        oracle=True,
     )
     defense.detect()
-elif args.defense == 'AC':
-    from other_defenses_tool_box.activation_clustering import AC
-    defense = AC(
-        args,
-    )
-    defense.detect(noisy_test=args.noisy_test)
 elif args.defense == 'STRIP':
-    from other_defenses_tool_box.strip import STRIP
     defense = STRIP(
         args,
         strip_alpha=1.0,
@@ -98,14 +85,13 @@ elif args.defense == 'STRIP':
         defense_fpr=0.1,
         batch_size=128,
     )
-    defense.detect(noisy_test=args.noisy_test)
+    defense.detect()
 elif args.defense == 'FP':
-    from other_defenses_tool_box.fine_pruning import FP
     if args.dataset == 'cifar10':
         defense = FP(
             args,
             prune_ratio=0.99,
-            finetune_epoch=100 if args.poison_type != 'SRA' else 50,
+            finetune_epoch=100,
             max_allowed_acc_drop=0.1,
         )
     elif args.dataset == 'gtsrb':
@@ -119,7 +105,6 @@ elif args.defense == 'FP':
         raise NotImplementedError()
     defense.detect()
 elif args.defense == 'ABL':
-    from other_defenses_tool_box.anti_backdoor_learning import ABL
     if args.dataset == 'cifar10':
         defense = ABL(
             args,
@@ -167,7 +152,6 @@ elif args.defense == 'ABL':
         )
         defense.detect()
 elif args.defense == 'NAD':
-    from other_defenses_tool_box.neural_attention_distillation import NAD
     defense = NAD(
         args,
         teacher_epochs=10,
@@ -175,7 +159,6 @@ elif args.defense == 'NAD':
     )
     defense.detect()
 elif args.defense == 'SentiNet':
-    from other_defenses_tool_box.sentinet import SentiNet
     defense = SentiNet(
         args,
         defense_fpr=0.1,
@@ -183,31 +166,15 @@ elif args.defense == 'SentiNet':
     )
     defense.detect()
 elif args.defense == 'ScaleUp':
-    from other_defenses_tool_box.scale_up import ScaleUp
     defense = ScaleUp(args)
-    defense.detect(noisy_test=args.noisy_test)
+    defense.detect()
 elif args.defense == "SEAM":
-    from other_defenses_tool_box.SEAM import SEAM
     defense = SEAM(args)
     defense.detect()
-elif args.defense == "SFT":
-    from other_defenses_tool_box.super_finetuning import SFT
-    defense = SFT(args)
+elif args.defense == "STF":
+    defense = STF(args)
     defense.detect()
-elif args.defense == 'NONE':
-    from other_defenses_tool_box.NONE import NONE
-    # if args.dataset == 'cifar10':
-    defense = NONE(args, none_lr=1e-2, max_reset_fraction=0.03, epoch_num_1=200, epoch_num_2=40)
-    defense.detect()
-elif args.defense == 'Frequency':
-    from other_defenses_tool_box.frequency import Frequency
-    defense = Frequency(args)
-    defense.detect()
-    defense.detect(noisy_test=args.noisy_test)
-elif args.defense == "FeatureRE":
-    from other_defenses_tool_box.feature_re import FeatureRE
-    defense = FeatureRE(args)
-    defense.detect()
+
 else:
     raise NotImplementedError()
 
