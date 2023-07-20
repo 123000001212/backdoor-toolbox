@@ -46,6 +46,17 @@ elif args.dataset == 'cifar10':
                                  download=True, transform=data_transform)
     img_size = 32
     num_classes = 10
+elif args.dataset == 'mnist':
+    data_transform = transforms.Compose([
+            transforms.Resize((32,32)),
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)),
+            #transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+        ])
+    clean_set = datasets.MNIST(os.path.join(data_dir, 'mnist'), train=False,
+                                 download=True, transform=data_transform)
+    img_size = 32
+    num_classes = 10
 elif args.dataset == 'imagenette':
 
     data_transform = transforms.Compose([

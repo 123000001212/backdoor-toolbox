@@ -10,7 +10,8 @@ data_dir = './data' # defaul clean dataset directory
 triggers_dir = './triggers' # default triggers directory
 imagenet_dir = '/scratch/gpfs/DATASETS/imagenet/ilsvrc_2012_classification_localization' # ImageNet dataset directory (USE YOUR OWN!)
 target_class = {
-    'cifar10' : 0,
+    'mnist': 0,
+    'cifar10' : 8,
     'gtsrb' : 2,
     # 'gtsrb' : 12, # BadEncoder
     'imagenette': 0,
@@ -25,6 +26,9 @@ record_poison_seed = True
 record_model_arch = False
 
 trigger_default = {
+    'mnist':{
+        'badnet' : 'badnet_patch_32.png',
+    },
     'cifar10': {
         'none' : 'none',
         'adaptive_blend': 'hellokitty_32.png',
@@ -46,8 +50,6 @@ trigger_default = {
         'BadEncoder': 'none',
         'SRA': 'phoenix_corner_32.png',
         'trojan': 'trojan_square_32.png',
-        'bpp': 'none',
-        'WB': 'none',
     },
     'gtsrb': {
         'none' : 'none',
@@ -82,6 +84,7 @@ trigger_default = {
 
 arch = {
     ### for base model & poison distillation
+    'mnist': resnet.ResNet18,
     'cifar10': resnet.ResNet18,
     # 'cifar10': vgg.vgg16_bn,
     # 'cifar10': mobilenetv2.mobilenetv2,

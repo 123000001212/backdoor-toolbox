@@ -23,6 +23,14 @@ class BackdoorDefense():
             self.momentum = 0.9
             self.weight_decay = 1e-4
             self.learning_rate = 0.1
+        elif args.dataset == 'mnist':      
+            self.img_size = 32
+            self.num_classes = 10
+            self.input_channel = 3
+            self.shape = torch.Size([3, 32, 32])
+            self.momentum = 0.9
+            self.weight_decay = 1e-4
+            self.learning_rate = 0.1
         elif args.dataset == 'cifar100':
             print('<To Be Implemented> Dataset = %s' % args.dataset)
             exit(0)
@@ -89,14 +97,17 @@ class BackdoorDefense():
         model_path = supervisor.get_model_dir(args)
         arch = supervisor.get_arch(args)
         self.model = arch(num_classes=self.num_classes)
+        #print(model_path)
+        #for name, param in self.model.named_parameters():
+        #    print(name)
+        #print(torch.load(model_path).keys())
         
         if os.path.exists(model_path):
             self.model.load_state_dict(torch.load(model_path))
             print("Evaluating model '{}'...".format(model_path))
         else:
             print("Model '{}' not found.".format(model_path))
-        if args.defense != "FeatureRE":
-            self.model = torch.nn.DataParallel(self.model)
+        
         self.model = self.model.cuda()
         self.model.eval()
         

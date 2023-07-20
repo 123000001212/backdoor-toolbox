@@ -10,7 +10,7 @@ parser.add_argument('-dataset', type=str, required=False,
                     default=default_args.parser_default['dataset'],
                     choices=default_args.parser_choices['dataset'])
 parser.add_argument('-poison_type', type=str, required=False,
-                    default='none',
+                    default='trojan',
                     choices=default_args.parser_choices['poison_type'])
 parser.add_argument('-poison_rate', type=float,  required=False,
                     choices=default_args.parser_choices['poison_rate'],
@@ -28,8 +28,8 @@ parser.add_argument('-resume', type=int, required=False, default=0)
 parser.add_argument('-resume_from_meta_info', default=False, action='store_true')
 parser.add_argument('-trigger', type=str, required=False,
                     default=None)
-parser.add_argument('-no_aug', default=False, action='store_true')
-parser.add_argument('-no_normalize', default=False, action='store_true')
+parser.add_argument('-no_aug', default=True, action='store_true')
+parser.add_argument('-no_normalize', default=True, action='store_true')
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
 parser.add_argument('-seed', type=int, required=False, default=default_args.seed)
@@ -88,6 +88,17 @@ if args.dataset == 'cifar10':
     weight_decay = 1e-4
     epochs = 100
     milestones = torch.tensor([50, 75])
+    learning_rate = 0.1
+    batch_size = 128
+
+elif args.dataset == 'mnist':
+
+    num_classes = 10
+    arch = supervisor.get_arch(args)
+    momentum = 0.9
+    weight_decay = 1e-4
+    epochs = 20
+    milestones = torch.tensor([10, 15])
     learning_rate = 0.1
     batch_size = 128
 
@@ -325,13 +336,23 @@ if os.path.exists(model_path):
 
 if args.dataset != 'ember':
     model = arch(num_classes=num_classes)
+    #from resnet_cifar import resnet18
+    #if args.dataset=='gtsrb':
+    #    model = resnet18(num_classes=43, norm_layer=nn.BatchNorm2d)
+    #elif args.dataset in ['mnist','cifar10','svhn']:
+    #    model = resnet18(num_classes=10, norm_layer=nn.BatchNorm2d)
+    #from vgg_cifar import small_vgg
+    #model = small_vgg(num_classes=10,norm_layer=nn.BatchNorm2d)
+    # model = arch(num_classes=num_classes)
 else:
     model = arch()
 
+#for name, param in model.named_parameters():
+#    print(name) 
 
 # Check if need to resume from the checkpoint
-if os.path.exists(os.path.join(poison_set_dir, "meta_info_{}".format(supervisor.get_model_name(args)))):
-    meta_info = torch.load(os.path.join(poison_set_dir, "meta_info_{}".format(supervisor.get_model_name(args))))
+if os.path.exists(os.path.join(poison_set_dir, "meta_info_seed={}".format(args.seed))):
+    meta_info = torch.load(os.path.join(poison_set_dir, "meta_info_seed={}".format(args.seed)))
 else:
     meta_info = dict()
     meta_info['epoch'] = 0
@@ -377,6 +398,8 @@ if args.dataset == 'imagenet':
     print('<time : %f minutes>' % ( (time.time() - st) / 60 ))
 """
 
+
+
 scaler = GradScaler()
 for epoch in range(1, epochs+1):  # train backdoored base model
     start_time = time.perf_counter()
@@ -390,7 +413,7 @@ for epoch in range(1, epochs+1):  # train backdoored base model
     model.train()
     preds = []
     labels = []
-    for data, target in tqdm(poisoned_set_loader):
+    for data, target in poisoned_set_loader:
 
         optimizer.zero_grad()
         data, target = data.cuda(), target.cuda()
@@ -436,4 +459,8 @@ for epoch in range(1, epochs+1):  # train backdoored base model
     torch.save(meta_info, os.path.join(poison_set_dir, "meta_info_{}".format(supervisor.get_model_name(args))))
 
 
-torch.save(model.module.state_dict(), model_path)
+# torch.save(model.module.state_dict(), model_path)
+
+# torch.save(model.module.state_dict(), 'poison_net.th')
+#print(model_path)
+#print(model.module.state_dict().keys())
