@@ -15,6 +15,7 @@ Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other att
 - torchvision 0.14.0
 - numpy 1.21.5
 - matplotlib 3.5.1
+- scikit-learn 0.24.1
 
 ## USAGE
 
@@ -32,7 +33,7 @@ python train_on_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=
 python test_model.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
 
 # Defenses (NC)
-python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
+python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01
 
 ```
 

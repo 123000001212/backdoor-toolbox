@@ -1,5 +1,5 @@
 import torch
-from other_defenses_tool_box import NC, STRIP, FP, ABL, NAD, SentiNet, ScaleUp, SEAM, STF
+from other_defenses_tool_box import NC, STRIP, FP, ABL, NAD, SentiNet, ScaleUp, SEAM
 import argparse, config, os, sys
 from utils import supervisor, tools, default_args
 import time
