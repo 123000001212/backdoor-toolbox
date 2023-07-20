@@ -6,7 +6,15 @@
 
 This is a fork adding MNIST dataset to the original [backdoor-toolbox](https://github.com/vtu81/backdoor-toolbox) repository. Note that we transform MNIST images to 3\*32\*32 from 1\*28\*28 in preprocessing procedure.
 
-Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other attack and defenses is able to run. 
+Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other attack and defenses with MNIST is able to run. 
+
+## Environment setup
+
+- python 3.8.16
+- torch 1.13.1
+- torchvision 0.14.0
+- numpy 1.21.5
+- matplotlib 3.5.1
 
 ## USAGE
 
