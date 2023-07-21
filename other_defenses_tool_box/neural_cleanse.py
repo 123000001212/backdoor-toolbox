@@ -326,10 +326,11 @@ class NC(BackdoorDefense):
             lr = 0.01
         elif self.args.dataset == 'gtsrb':
             full_train_set = datasets.GTSRB(os.path.join(config.data_dir, 'gtsrb'), split='train', download=True, transform=transforms.Compose([transforms.Resize((32, 32)), transforms.ToTensor()]))
-            data_transform_aug = transforms.Compose([
-                transforms.RandomRotation(15),
-                transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
-            ])
+            data_transform_aug = transforms.Compose([])
+            #data_transform_aug = transforms.Compose([
+            #    transforms.RandomRotation(15),
+            #    transforms.Normalize((0.3337, 0.3064, 0.3171), (0.2672, 0.2564, 0.2629))
+            #])
             batch_size = 128
             lr = 0.001
             
