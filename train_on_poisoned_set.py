@@ -28,7 +28,7 @@ parser.add_argument('-resume', type=int, required=False, default=0)
 parser.add_argument('-resume_from_meta_info', default=False, action='store_true')
 parser.add_argument('-trigger', type=str, required=False,
                     default=None)
-parser.add_argument('-no_aug', default=True, action='store_true')
+parser.add_argument('-no_aug', default=False, action='store_true')
 parser.add_argument('-no_normalize', default=True, action='store_true')
 parser.add_argument('-devices', type=str, default='0')
 parser.add_argument('-log', default=False, action='store_true')
