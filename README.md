@@ -1,7 +1,5 @@
 # Backdoor Toolbox (MNIST fork)
 
-进度：测试仓库代码能否正确运行；mnist/gtsrb
-
 ## ABOUT
 
 This is a fork adding MNIST dataset to the original [backdoor-toolbox](https://github.com/vtu81/backdoor-toolbox) repository. Note that we transform MNIST images to 3\*32\*32 from 1\*28\*28 in preprocessing procedure.
