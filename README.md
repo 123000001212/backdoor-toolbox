@@ -35,7 +35,7 @@ python train_on_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=
 python test_model.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
 
 # Defenses (NC)
-python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01
+python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
 
 ```
 
