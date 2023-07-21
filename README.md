@@ -19,6 +19,8 @@ Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other att
 
 ## USAGE
 
+### MNIST
+
 ```
 # Create a clean set
 python create_clean_set.py -dataset=mnist
@@ -27,13 +29,33 @@ python create_clean_set.py -dataset=mnist
 python create_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
 
 # Train on the poisoned training set
-python train_on_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
+python train_on_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
 
 # Test the backdoor model
 python test_model.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
 
 # Defenses (NC)
 python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01
+
+```
+
+### GTSRB
+
+```
+# Create a clean set
+python create_clean_set.py -dataset=gtsrb -clean_budget=5000
+
+# Create a poisoned training set
+python create_poisoned_set.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
+
+# Train on the poisoned training set
+python train_on_poisoned_set.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
+
+# Test the backdoor model
+python test_model.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
+
+# Defenses (NC)
+python other_defense.py -defense=NC -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
 
 ```
 
