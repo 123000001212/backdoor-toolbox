@@ -69,6 +69,16 @@ elif args.dataset == 'cifar100':
     num_classes = 100
     raise NotImplementedError('<To Be Implemented> Dataset = %s' % args.dataset)
 
+elif args.dataset == 'mnist':
+    num_classes = 10
+    arch = supervisor.get_arch(args)
+    momentum = 0.9
+    weight_decay = 1e-4
+    epochs = 20
+    milestones = torch.tensor([10, 15])
+    learning_rate = 0.1
+    batch_size = 128
+
 elif args.dataset == 'gtsrb':
     num_classes = 43
     momentum = 0.9
