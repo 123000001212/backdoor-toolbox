@@ -16,7 +16,7 @@ Note: Only "badnet" attack and "NC" defense is tested, I'm not sure if other att
 - scikit-learn 0.24.1
 
 ## USAGE
-
+Run the following commands in sequence.
 ### MNIST
 
 ```
