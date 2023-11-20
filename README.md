@@ -29,8 +29,8 @@ python create_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=0.
 # Train on the poisoned training set
 python train_on_poisoned_set.py -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
 
-# Test the backdoor model
-python test_model.py -dataset=mnist -poison_type=badnet -poison_rate=0.01
+# Test the backdoor model (optional)
+python test_model.py -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
 
 # Defenses (NC)
 python other_defense.py -defense=NC -dataset=mnist -poison_type=badnet -poison_rate=0.01 -no_aug
@@ -49,7 +49,7 @@ python create_poisoned_set.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.
 # Train on the poisoned training set
 python train_on_poisoned_set.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
 
-# Test the backdoor model
+# Test the backdoor model (optional)
 python test_model.py -dataset=gtsrb -poison_type=badnet -poison_rate=0.01
 
 # Defenses (NC)
